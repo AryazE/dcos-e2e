@@ -2,8 +2,10 @@ name: dcos-e2e-test
 on:
   # run on PR open or update, and weekly at 7:42pm on Sunday
   pull_request:
-  schedule:
-  - cron: '42 19 * * 0'
+  push:
+  workflow_dispatch:
+#   schedule:
+#   - cron: '42 19 * * 0'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -51,16 +53,16 @@ jobs:
         - tests/test_dcos_e2e/test_node_install.py::TestAdvancedInstallationMethod::test_install_dcos_from_path
         - tests/test_dcos_e2e/test_node_install.py::TestCopyFiles::test_install_from_path_with_genconf_files
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.6
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.6'
+        python-version: '3.11'
     - name: Install dependencies
       run: |
         sudo modprobe ip6_tables
         echo $LICENSE_KEY_CONTENTS > /tmp/license-key.txt
-        pip install --upgrade 'pip<20.3' setuptools codecov
+        pip install --upgrade pip setuptools codecov
         pip uninstall -y six
         pip install --upgrade --editable .[dev]
       env:
